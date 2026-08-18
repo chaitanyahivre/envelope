@@ -13,15 +13,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Reveal elements on scroll
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-      }
-    });
-  }, { threshold: 0.15 });
+  const animatedItems = document.querySelectorAll('[data-animate]');
 
-  document.querySelectorAll('[data-animate]').forEach(el => observer.observe(el));
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -36px' });
+
+    animatedItems.forEach(el => observer.observe(el));
+  } else {
+    animatedItems.forEach(el => el.classList.add('is-visible'));
+  }
 
   // Start gentle floating on hero cards
   document.querySelectorAll('.paper-card.one').forEach(el => el.classList.add('float-1'));
